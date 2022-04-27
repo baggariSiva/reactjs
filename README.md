@@ -1,7 +1,7 @@
 # ReactJs example demo CI/CD pipeline
 
 
-<a href="https://dash.elest.io/deploy?source=cicd&social=Github&url=https://github.com/elestio-examples/static"><img src="src\deploy-on-elestio.png" alt="Deploy on Platform.sh" width="180px" /></a>
+<a href="https://dash.elest.io/deploy?source=cicd&social=Github&url=https://github.com/elestio-examples/reactjs"><img src="src\deploy-on-elestio.png" alt="Deploy on Platform.sh" width="180px" /></a>
 
 Example application and CI/CD pipeline showing how to deploy a ReactJs website to elestio.
 

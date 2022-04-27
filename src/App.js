@@ -1,26 +1,17 @@
-import { useEffect } from "react";
-import "./App.css";
+import { useEffect, useState } from "react";
 
+import "./App.css";
 import elestioLogo from "./elestio-logo.svg";
 
-function getLatency() {
-  var started = new Date().getTime();
-  var url = "/data.json?t=" + +new Date();
-  fetch(url)
-    .then(function (response) {
-      var ended = new Date().getTime();
-      var milliseconds = ended - started;
-      document.getElementById("latency").innerHTML = milliseconds + " ms";
-    })
-    .catch(function (error) {
-      document.getElementById("latency").innerHTML = "? ms";
-    });
-}
+const App = () => {
+  const [latency, setLatency] = useState("? ms");
+  const [location, setLocation] = useState("?");
+  const [ip, setIP] = useState("?");
 
-function App() {
   useEffect(() => {
     (async function () {
-      getLatency();
+      const interval = setInterval(() => getLatency(), 1000);
+
       if (localStorage.getItem("visitorInfos") == null) {
         var visitorInfos = null;
         await fetch("https://ipinfo.io/json")
@@ -30,21 +21,36 @@ function App() {
           })
           .catch(function (error) {
             console.log(error);
-            //document.getElementsByClassName("app-title")[0].innerHTML = "Backend is not reacheable, are you still connected to internet?";
           });
       } else {
         visitorInfos = JSON.parse(localStorage.getItem("visitorInfos"));
       }
 
-      //console.log(visitorInfos);
-      document.getElementById("yourIP").innerHTML = visitorInfos.ip
-        ? visitorInfos.ip
-        : "?";
-      document.getElementById("location").innerHTML = visitorInfos.city
-        ? visitorInfos.country + ", " + visitorInfos.city
-        : "?";
+      setIP(visitorInfos.ip ? visitorInfos.ip : "?");
+
+      setLocation(
+        visitorInfos.city
+          ? visitorInfos.country + ", " + visitorInfos.city
+          : "?"
+      );
     })();
   }, []);
+
+  /**
+   * Get Latency
+   */
+  const getLatency = () => {
+    var started = new Date().getTime();
+    var url = "/data.json?t=" + +new Date();
+    fetch(url)
+      .then(() => {
+        var ended = new Date().getTime();
+        var milliseconds = ended - started;
+        setLatency(milliseconds + " ms");
+      })
+      .catch(() => setLatency("? ms"));
+  };
+
   return (
     <>
       <header className="app-header">
@@ -66,26 +72,30 @@ function App() {
         <p className="app-info-block">
           Your IP{" "}
           <strong className="subVal" id="yourIP">
-            ?
+            {ip}
           </strong>
         </p>
 
         <p className="app-info-block">
           Your Location{" "}
           <strong className="subVal" id="location">
-            ?
+            {location}
           </strong>
         </p>
 
         <p className="app-info-block">
           Latency to server{" "}
           <strong className="subVal" id="latency">
-            ? ms
+            {latency}
           </strong>
         </p>
 
         <div className="app-deploy">
-          <a href="https://dash.elest.io/" className="btn mb-10-m btn-try">
+          <a
+            href="https://dash.elest.io/deploy?source=cicd&social=Github&url=https://github.com/elestio-examples/reactjs"
+            className="btn mb-10-m btn-try"
+            target={"_blank"}
+          >
             Deploy on Elestio
           </a>
         </div>
@@ -107,6 +117,6 @@ function App() {
       </div>
     </>
   );
-}
+};
 
 export default App;
